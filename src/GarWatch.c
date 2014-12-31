@@ -176,9 +176,9 @@ static void update_battery(BatteryChargeState charge_state)
   {
     layer_set_hidden(bitmap_layer_get_layer(battery_percent_layers[i]), false);
   }  
-  set_container_image(&battery_percent_image[0], battery_percent_layers[0], TINY_IMAGE_RESOURCE_IDS[charge_state.charge_percent/10], GPoint(89, 39));
-  set_container_image(&battery_percent_image[1], battery_percent_layers[1], TINY_IMAGE_RESOURCE_IDS[charge_state.charge_percent%10], GPoint(95, 39));
-  set_container_image(&battery_percent_image[2], battery_percent_layers[2], TINY_IMAGE_RESOURCE_IDS[10], GPoint(101, 40)); 
+  set_container_image(&battery_percent_image[0], battery_percent_layers[0], TINY_IMAGE_RESOURCE_IDS[charge_state.charge_percent/10], GPoint(89, 40));
+  set_container_image(&battery_percent_image[1], battery_percent_layers[1], TINY_IMAGE_RESOURCE_IDS[charge_state.charge_percent%10], GPoint(95, 40));
+  set_container_image(&battery_percent_image[2], battery_percent_layers[2], TINY_IMAGE_RESOURCE_IDS[10], GPoint(101, 41)); 
 }
 
 static void toggle_bluetooth_icon(bool connected)
@@ -209,25 +209,24 @@ unsigned short get_display_hour(unsigned short hour)
   {
     return hour;
   }
-  unsigned short display_hour = hour % 12;
-  // Converts "0" to "12"
+  unsigned short display_hour = hour % 12; //Converts "0" to "12"
   return display_hour ? display_hour : 12;
 }
 
 static void update_days(struct tm *tick_time)
 {
-  set_container_image(&day_name_image, day_name_layer, DAY_NAME_IMAGE_RESOURCE_IDS[tick_time->tm_wday], GPoint(17, 128));//55
-  set_container_image(&month_name_image, month_name_layer, MONTH_NAME_IMAGE_RESOURCE_IDS[tick_time->tm_mon], GPoint(63, 128));
-  set_container_image(&date_digits_images[0], date_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[tick_time->tm_mday/10], GPoint(107, 128));
-  set_container_image(&date_digits_images[1], date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[tick_time->tm_mday%10], GPoint(118, 128));
+  set_container_image(&day_name_image, day_name_layer, DAY_NAME_IMAGE_RESOURCE_IDS[tick_time->tm_wday], GPoint(17, 124));
+  set_container_image(&month_name_image, month_name_layer, MONTH_NAME_IMAGE_RESOURCE_IDS[tick_time->tm_mon], GPoint(63, 124));
+  set_container_image(&date_digits_images[0], date_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[tick_time->tm_mday/10], GPoint(105, 124));
+  set_container_image(&date_digits_images[1], date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[tick_time->tm_mday%10], GPoint(116, 124));
 }
 
 static void update_hours(struct tm *tick_time)
 {
   unsigned short display_hour = get_display_hour(tick_time->tm_hour);
 
-  set_container_image(&time_digits_images[0], time_digits_layers[0], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour/10], GPoint(11, 70));
-  set_container_image(&time_digits_images[1], time_digits_layers[1], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour%10], GPoint(40, 70));
+  set_container_image(&time_digits_images[0], time_digits_layers[0], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour/10], GPoint(11, 68));
+  set_container_image(&time_digits_images[1], time_digits_layers[1], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour%10], GPoint(40, 68));
 		
 	if (display_hour/10 == 0)
 	{
@@ -238,11 +237,11 @@ static void update_hours(struct tm *tick_time)
 		layer_set_hidden(bitmap_layer_get_layer(time_digits_layers[0]), false);
 	}
 
-  if (1)//!clock_is_24h_style())
+  if (!clock_is_24h_style())
   {
-    if (1)//tick_time->tm_hour >= 12)
+    if (tick_time->tm_hour >= 12)
 	 {
-      set_container_image(&time_format_image, time_format_layer, RESOURCE_ID_IMAGE_PM_MODE, GPoint(17, 58));
+      set_container_image(&time_format_image, time_format_layer, RESOURCE_ID_IMAGE_PM_MODE, GPoint(50, 40));
       layer_set_hidden(bitmap_layer_get_layer(time_format_layer), false);
     } 
     else
@@ -253,8 +252,8 @@ static void update_hours(struct tm *tick_time)
 }
 static void update_minutes(struct tm *tick_time)
 {
-  set_container_image(&time_digits_images[2], time_digits_layers[2], BIG_DIGIT_IMAGE_RESOURCE_IDS[tick_time->tm_min/10], GPoint(76, 70));
-  set_container_image(&time_digits_images[3], time_digits_layers[3], BIG_DIGIT_IMAGE_RESOURCE_IDS[tick_time->tm_min%10], GPoint(105, 70));
+  set_container_image(&time_digits_images[2], time_digits_layers[2], BIG_DIGIT_IMAGE_RESOURCE_IDS[tick_time->tm_min/10], GPoint(76, 68));
+  set_container_image(&time_digits_images[3], time_digits_layers[3], BIG_DIGIT_IMAGE_RESOURCE_IDS[tick_time->tm_min%10], GPoint(105, 68));
 }
 static void update_seconds(struct tm *tick_time)
 {
@@ -313,7 +312,7 @@ static void init(void)
   
   separator_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_SEPARATOR);
   GRect frame = (GRect) {
-    .origin = { .x = 68, .y = 85 },
+    .origin = { .x = 68, .y = 77 },
     .size = separator_image->bounds.size
   };
   separator_layer = bitmap_layer_create(frame);
@@ -322,7 +321,7 @@ static void init(void)
 
   meter_bar_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_METER_BAR);
   GRect frame2 = (GRect) {
-    .origin = { .x = 17, .y = 39 },
+    .origin = { .x = 17, .y = 40 },
     .size = meter_bar_image->bounds.size
   };
   meter_bar_layer = bitmap_layer_create(frame2);
@@ -331,7 +330,7 @@ static void init(void)
 
   bluetooth_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BLUETOOTH);
   GRect frame3 = (GRect) {
-    .origin = { .x = 33, .y = 39 },
+    .origin = { .x = 33, .y = 40 },
     .size = bluetooth_image->bounds.size
   };
   bluetooth_layer = bitmap_layer_create(frame3);
@@ -340,7 +339,7 @@ static void init(void)
   
   battery_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY);
   GRect frame4 = (GRect) {
-    .origin = { .x = 111, .y = 38 },
+    .origin = { .x = 111, .y = 39 },
     .size = battery_image->bounds.size
   };
   battery_layer = bitmap_layer_create(frame4);
