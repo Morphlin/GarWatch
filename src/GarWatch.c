@@ -215,18 +215,18 @@ unsigned short get_display_hour(unsigned short hour)
 
 static void update_days(struct tm *tick_time)
 {
-  set_container_image(&day_name_image, day_name_layer, DAY_NAME_IMAGE_RESOURCE_IDS[tick_time->tm_wday], GPoint(17, 124));
-  set_container_image(&month_name_image, month_name_layer, MONTH_NAME_IMAGE_RESOURCE_IDS[tick_time->tm_mon], GPoint(63, 124));
-  set_container_image(&date_digits_images[0], date_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[tick_time->tm_mday/10], GPoint(105, 124));
-  set_container_image(&date_digits_images[1], date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[tick_time->tm_mday%10], GPoint(116, 124));
+  set_container_image(&day_name_image, day_name_layer, DAY_NAME_IMAGE_RESOURCE_IDS[tick_time->tm_wday], GPoint(17, 125));
+  set_container_image(&month_name_image, month_name_layer, MONTH_NAME_IMAGE_RESOURCE_IDS[tick_time->tm_mon], GPoint(63, 125));
+  set_container_image(&date_digits_images[0], date_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[tick_time->tm_mday/10], GPoint(105, 125));
+  set_container_image(&date_digits_images[1], date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[tick_time->tm_mday%10], GPoint(116, 125));
 }
 
 static void update_hours(struct tm *tick_time)
 {
   unsigned short display_hour = get_display_hour(tick_time->tm_hour);
 
-  set_container_image(&time_digits_images[0], time_digits_layers[0], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour/10], GPoint(11, 68));
-  set_container_image(&time_digits_images[1], time_digits_layers[1], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour%10], GPoint(40, 68));
+  set_container_image(&time_digits_images[0], time_digits_layers[0], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour/10], GPoint(11, 66));
+  set_container_image(&time_digits_images[1], time_digits_layers[1], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour%10], GPoint(40, 66));
 		
 	if (display_hour/10 == 0)
 	{
@@ -252,8 +252,8 @@ static void update_hours(struct tm *tick_time)
 }
 static void update_minutes(struct tm *tick_time)
 {
-  set_container_image(&time_digits_images[2], time_digits_layers[2], BIG_DIGIT_IMAGE_RESOURCE_IDS[tick_time->tm_min/10], GPoint(76, 68));
-  set_container_image(&time_digits_images[3], time_digits_layers[3], BIG_DIGIT_IMAGE_RESOURCE_IDS[tick_time->tm_min%10], GPoint(105, 68));
+  set_container_image(&time_digits_images[2], time_digits_layers[2], BIG_DIGIT_IMAGE_RESOURCE_IDS[tick_time->tm_min/10], GPoint(76, 66));
+  set_container_image(&time_digits_images[3], time_digits_layers[3], BIG_DIGIT_IMAGE_RESOURCE_IDS[tick_time->tm_min%10], GPoint(105, 66));
 }
 static void update_seconds(struct tm *tick_time)
 {
@@ -312,7 +312,7 @@ static void init(void)
   
   separator_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_SEPARATOR);
   GRect frame = (GRect) {
-    .origin = { .x = 68, .y = 77 },
+    .origin = { .x = 68, .y = 75 },
     .size = separator_image->bounds.size
   };
   separator_layer = bitmap_layer_create(frame);
