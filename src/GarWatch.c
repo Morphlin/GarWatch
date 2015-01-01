@@ -10,6 +10,12 @@ static bool appStarted = false;
 static GBitmap *background_image;
 static BitmapLayer *background_layer;
 
+static GBitmap *logo_image;
+static BitmapLayer *logo_layer;
+
+static GBitmap *logob_image;
+static BitmapLayer *logob_layer;
+
 static GBitmap *separator_image;
 static BitmapLayer *separator_layer;
 
@@ -111,14 +117,6 @@ const int TINY_IMAGE_RESOURCE_IDS[] = {
   RESOURCE_ID_IMAGE_TINY_PERCENT
 };
 
-void change_background() {
-  gbitmap_destroy(background_image);
-  background_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND);
-  
-  bitmap_layer_set_bitmap(background_layer, background_image);
-  layer_mark_dirty(bitmap_layer_get_layer(background_layer));
-}
-
 void change_battery_icon(bool charging)
 {
   gbitmap_destroy(battery_image);
@@ -215,7 +213,7 @@ unsigned short get_display_hour(unsigned short hour)
 
 static void update_days(struct tm *tick_time)
 {
-  set_container_image(&day_name_image, day_name_layer, DAY_NAME_IMAGE_RESOURCE_IDS[tick_time->tm_wday], GPoint(17, 125));
+  set_container_image(&day_name_image, day_name_layer, DAY_NAME_IMAGE_RESOURCE_IDS[tick_time->tm_wday], GPoint(18, 125));
   set_container_image(&month_name_image, month_name_layer, MONTH_NAME_IMAGE_RESOURCE_IDS[tick_time->tm_mon], GPoint(63, 125));
   set_container_image(&date_digits_images[0], date_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[tick_time->tm_mday/10], GPoint(105, 125));
   set_container_image(&date_digits_images[1], date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[tick_time->tm_mday%10], GPoint(116, 125));
@@ -225,8 +223,8 @@ static void update_hours(struct tm *tick_time)
 {
   unsigned short display_hour = get_display_hour(tick_time->tm_hour);
 
-  set_container_image(&time_digits_images[0], time_digits_layers[0], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour/10], GPoint(11, 66));
-  set_container_image(&time_digits_images[1], time_digits_layers[1], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour%10], GPoint(40, 66));
+  set_container_image(&time_digits_images[0], time_digits_layers[0], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour/10], GPoint(12, 66));
+  set_container_image(&time_digits_images[1], time_digits_layers[1], BIG_DIGIT_IMAGE_RESOURCE_IDS[display_hour%10], GPoint(41, 66));
 		
 	if (display_hour/10 == 0)
 	{
@@ -252,8 +250,8 @@ static void update_hours(struct tm *tick_time)
 }
 static void update_minutes(struct tm *tick_time)
 {
-  set_container_image(&time_digits_images[2], time_digits_layers[2], BIG_DIGIT_IMAGE_RESOURCE_IDS[tick_time->tm_min/10], GPoint(76, 66));
-  set_container_image(&time_digits_images[3], time_digits_layers[3], BIG_DIGIT_IMAGE_RESOURCE_IDS[tick_time->tm_min%10], GPoint(105, 66));
+  set_container_image(&time_digits_images[2], time_digits_layers[2], BIG_DIGIT_IMAGE_RESOURCE_IDS[tick_time->tm_min/10], GPoint(77, 66));
+  set_container_image(&time_digits_images[3], time_digits_layers[3], BIG_DIGIT_IMAGE_RESOURCE_IDS[tick_time->tm_min%10], GPoint(106, 66));
 }
 static void update_seconds(struct tm *tick_time)
 {
@@ -302,17 +300,34 @@ static void init(void)
   window_layer = window_get_root_layer(window);
   
   background_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND);
-  background_layer = bitmap_layer_create(layer_get_frame(window_layer));
-	
+  background_layer = bitmap_layer_create(layer_get_frame(window_layer));	
   bitmap_layer_set_bitmap(background_layer, background_image);
   layer_add_child(window_layer, bitmap_layer_get_layer(background_layer));
+	
+  logo_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LOGO);
+  GRect logoframe = (GRect) {
+    .origin = { .x = 6, .y = 9 },
+    .size = logo_image->bounds.size
+  };
+  logo_layer = bitmap_layer_create(logoframe);
+  bitmap_layer_set_bitmap(logo_layer, logo_image);
+  layer_add_child(window_layer, bitmap_layer_get_layer(logo_layer));
+	
+  logob_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LOGOB);
+  GRect logobframe = (GRect) {
+    .origin = { .x = 10, .y = 156 },
+    .size = logob_image->bounds.size
+  };
+  logob_layer = bitmap_layer_create(logobframe);
+  bitmap_layer_set_bitmap(logob_layer, logob_image);
+  layer_add_child(window_layer, bitmap_layer_get_layer(logob_layer));
   
   big_time_layer = layer_create(layer_get_frame(window_layer));
   layer_add_child(window_layer, big_time_layer);
   
   separator_image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_SEPARATOR);
   GRect frame = (GRect) {
-    .origin = { .x = 68, .y = 75 },
+    .origin = { .x = 70, .y = 75 },
     .size = separator_image->bounds.size
   };
   separator_layer = bitmap_layer_create(frame);
@@ -398,6 +413,16 @@ static void deinit(void)
   bitmap_layer_destroy(background_layer);
   gbitmap_destroy(background_image);
   background_image = NULL;
+	
+  layer_remove_from_parent(bitmap_layer_get_layer(logo_layer));
+  bitmap_layer_destroy(logo_layer);
+  gbitmap_destroy(logo_image);
+  logo_image = NULL;
+	
+  layer_remove_from_parent(bitmap_layer_get_layer(logob_layer));
+  bitmap_layer_destroy(logob_layer);
+  gbitmap_destroy(logob_image);
+  logob_image = NULL;
   
   layer_remove_from_parent(bitmap_layer_get_layer(separator_layer));
   bitmap_layer_destroy(separator_layer);
@@ -407,7 +432,7 @@ static void deinit(void)
   layer_remove_from_parent(bitmap_layer_get_layer(meter_bar_layer));
   bitmap_layer_destroy(meter_bar_layer);
   gbitmap_destroy(meter_bar_image);
-  background_image = NULL;
+  meter_bar_image = NULL;
   
   layer_remove_from_parent(bitmap_layer_get_layer(bluetooth_layer));
   bitmap_layer_destroy(bluetooth_layer);
